@@ -34,9 +34,11 @@ export default function Home() {
         <form name="formData" onSubmit={formHandler} className="p-3 mx-40 my-10 bg-green-300 rounded-md">
           <legend className="text-2xl text-center">Create Cookie Stand</legend>
           
+          <div className="ml-8">
           <label>Location</label>
-          <input name="location" className="mx-1"></input> 
-          <br />
+          <input name="location" className="w-4/5 mx-1"></input>
+          </div>
+
           <br />
           
           <div class="flex flex-row">
