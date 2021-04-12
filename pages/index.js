@@ -1,22 +1,24 @@
 import Head from 'next/head'
 import { useState } from 'react'
+import { hours } from '../data'
+import Link from 'next/link'
 
 export default function Home() {
   
-  const [cookieStand, setCookieStand] = useState("")
-
+  const [cookieStand, setCookieStand] = useState("No Cookie Stands Available")
+  
+  const hours_array = hours
+  
   function formHandler(event){
     event.preventDefault();
     
     const formData = new FormData(event.target)
     const cookieStand = JSON.stringify(Object.fromEntries(formData))
     setCookieStand(cookieStand);
-    // alert(event.target.location.value)
-    // alert(event.target.min.value)
-    // alert(event.target.max.value)
-    // alert(event.target.average.value)
 
   }
+
+  
 
   return (
     <div className="">
@@ -24,14 +26,34 @@ export default function Home() {
         <title>Cookie Stand Admin</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <header className="flex p-4 bg-green-500">
-        <h1 className="text-4xl">Cookie Stand Admin</h1>
-      </header>
+      
+      <Header title="Cookie Stand Admin"/>
 
       <main className="">
-        
-        <form name="formData" onSubmit={formHandler} className="p-3 mx-40 my-10 bg-green-300 rounded-md">
+      <CreateForm />
+      <ReportTable cookieStand={cookieStand} hours_arr={hours_array} />
+      </main>
+      
+      <Footer />
+    </div>
+  )
+
+  function Header(props){
+    return(
+      <header className="flex p-4 bg-green-500">
+      <h1 className="text-4xl">{props.title}</h1>
+      <nav className="relative flex flex-wrap items-center justify-between px-2 py-3">
+        <Link href='/overview'>
+          <a>Overview</a>
+        </Link>
+      </nav>
+      </header>
+    )
+  }
+
+  function CreateForm(props){
+    return(
+    <form name="formData" onSubmit={formHandler} className="p-3 mx-40 my-10 bg-green-300 rounded-md">
           <legend className="text-2xl text-center">Create Cookie Stand</legend>
           
           <div className="ml-8">
@@ -65,16 +87,23 @@ export default function Home() {
           </div>
 
         </form>
+    )
+  }
 
-        <p className="text-center text-md">Report Table Coming Soon...</p>
-
-        <p className="my-4 text-center">{cookieStand}</p>
-      
-      </main>
-
+  function Footer(props){
+    return(
       <footer className="flex p-4 bg-green-500">
-        <p>&copy; 2021</p>
+      <p>&copy; 2021</p>
       </footer>
-    </div>
-  )
+    )
+  }
+
+  function ReportTable(props){
+    return(
+      <div>
+      <p className="my-8 text-2xl text-center">{cookieStand}</p>
+      <p>{props.hours_arr}</p>
+      </div>
+    )
+  }
 }
