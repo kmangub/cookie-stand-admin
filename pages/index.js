@@ -4,20 +4,32 @@ import { hours } from '../data'
 import Link from 'next/link'
 
 export default function Home() {
+  // function formHandler(event){
+  //   event.preventDefault();
+    
+  //   const formData = new FormData(event.target)
+  //   const cookieStand = JSON.stringify(Object.fromEntries(formData))
+  //   setCookieStand(cookieStand);
+  // }
   
-  const [cookieStand, setCookieStand] = useState("No Cookie Stands Available")
+  // const [cookieStand, setCookieStand] = useState("No Cookie Stands Available")
   
-  const hours_array = hours
   
-  function formHandler(event){
+  
+  const [reports, setReports] = useState([]);
+
+  function onCreate(event){
     event.preventDefault();
     
-    const formData = new FormData(event.target)
-    const cookieStand = JSON.stringify(Object.fromEntries(formData))
-    setCookieStand(cookieStand);
-
+    const report = {
+      location: event.target.location.value,
+      hourly_sales: [48, 42, 30, 24, 42, 24, 36, 42, 42, 48, 36, 42, 24, 36],
+      hourlyTotal: 516,
+      reportLength: reports.length,
+    }
+    
+    setReports([...reports, report])
   }
-
   
 
   return (
@@ -31,10 +43,10 @@ export default function Home() {
 
       <main className="">
       <CreateForm />
-      <ReportTable cookieStand={cookieStand} hours_arr={hours_array} />
+      <ReportTable hours_arr={hours} reportTableArray={reports} />
       </main>
       
-      <Footer />
+      <Footer reportTableArray={reports}/>
     </div>
   )
 
@@ -42,9 +54,9 @@ export default function Home() {
     return(
       <header className="flex p-4 bg-green-500">
       <h1 className="text-4xl">{props.title}</h1>
-      <nav className="relative flex flex-wrap items-center justify-between px-2 py-3">
+      <nav>
         <Link href='/overview'>
-          <a>Overview</a>
+          <a className="float-right pl-1 pr-1 mt-3 mx-50 text-md ">Overview</a>
         </Link>
       </nav>
       </header>
@@ -53,7 +65,7 @@ export default function Home() {
 
   function CreateForm(props){
     return(
-    <form name="formData" onSubmit={formHandler} className="p-3 mx-40 my-10 bg-green-300 rounded-md">
+    <form name="formData" onSubmit={onCreate} className="p-3 mx-40 my-10 bg-green-300 rounded-md">
           <legend className="text-2xl text-center">Create Cookie Stand</legend>
           
           <div className="ml-8">
@@ -93,17 +105,47 @@ export default function Home() {
   function Footer(props){
     return(
       <footer className="flex p-4 bg-green-500">
-      <p>&copy; 2021</p>
+      <p>{props.reportTableArray.length} Locations World Wide</p>
       </footer>
     )
   }
+  
 
   function ReportTable(props){
+    const noCookieStands = props.reportTableArray.length;
+    if (noCookieStands == 0) {
+      return(
+        <h2 className="my-8 text-2xl text-center">No Cookie Stands Available</h2>
+      )
+    }
     return(
-      <div>
-      <p className="my-8 text-2xl text-center">{cookieStand}</p>
-      <p>{props.hours_arr}</p>
-      </div>
+      <table className="w-1/2 mx-auto my-8 bg-green-500 rounded-md">
+        <thead>
+          <tr>
+            <th>Location</th>
+            {props.hours_arr.map(hour =>(
+              <th>{hour}</th>
+            ))}
+            <th>Totals</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.reportTableArray.map(data =>(
+            <tr className="odd:bg-green-400">
+              <td className="pl-2 border border-gray-700">{data.location}</td>
+              {data.hourly_sales.map(sale =>(
+                <td className="pl-2 border border-gray-700">{sale}</td>
+              ))}
+              <td className="pl-2 border border-gray-700">{data.hourlyTotal}</td>
+            </tr>
+          ))}
+            
+            
+        </tbody>
+        
+      </table>
+      // <p className="my-8 text-2xl text-center">{cookieStand}</p>
+      // <p>{props.hours_arr}</p>
     )
   }
 }
