@@ -1,8 +1,11 @@
 import Head from 'next/head'
 import { useState } from 'react'
 import { hours } from '../data'
-import Link from 'next/link'
+import Header from '../components/header'
+import Footer from '../components/footer'
+import CreateForm from '../components/createForm'
 
+let total_sales = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 export default function Home() {
   // function formHandler(event){
   //   event.preventDefault();
@@ -18,6 +21,16 @@ export default function Home() {
   
   const [reports, setReports] = useState([]);
 
+  function new_total(arr, total_sales){
+    let new_total = []
+    for (var i = 0; i < arr.length; i++){
+      total_sales[i] += arr[i]
+      new_total.push(total_sales[i])
+    }
+    total_sales = new_total
+    return new_total
+  }
+
   function onCreate(event){
     event.preventDefault();
     
@@ -26,11 +39,18 @@ export default function Home() {
       hourly_sales: [48, 42, 30, 24, 42, 24, 36, 42, 42, 48, 36, 42, 24, 36],
       hourlyTotal: 516,
       reportLength: reports.length,
+      total: new_total([48, 42, 30, 24, 42, 24, 36, 42, 42, 48, 36, 42, 24, 36, 516], total_sales)
     }
     
     setReports([...reports, report])
   }
   
+  function getLatestTotal(){
+    if(reports.length === 0){
+      return 'Ask Me Anythin!'
+    }
+    return reports[reports.length -1].total
+  }
 
   return (
     <div className="">
@@ -43,25 +63,12 @@ export default function Home() {
 
       <main className="">
       <CreateForm />
-      <ReportTable hours_arr={hours} reportTableArray={reports} />
+      <ReportTable hours_arr={hours} reportTableArray={reports} latestTotal={getLatestTotal()}  />
       </main>
       
       <Footer reportTableArray={reports}/>
     </div>
   )
-
-  function Header(props){
-    return(
-      <header className="flex p-4 bg-green-500">
-      <h1 className="text-4xl">{props.title}</h1>
-      <nav>
-        <Link href='/overview'>
-          <a className="float-right pl-1 pr-1 mt-3 mx-50 text-md ">Overview</a>
-        </Link>
-      </nav>
-      </header>
-    )
-  }
 
   function CreateForm(props){
     return(
@@ -102,13 +109,7 @@ export default function Home() {
     )
   }
 
-  function Footer(props){
-    return(
-      <footer className="flex p-4 bg-green-500">
-      <p>{props.reportTableArray.length} Locations World Wide</p>
-      </footer>
-    )
-  }
+
   
 
   function ReportTable(props){
@@ -143,9 +144,16 @@ export default function Home() {
             
         </tbody>
         
+        <tfoot>
+            <tr>
+              <td className="pl-2 font-bold border border-gray-700 ">Totals</td>
+          {props.latestTotal.map(item =>(
+              <td className="pl-2 font-bold border border-gray-700 ">{item}</td>
+              ))}
+            </tr>
+        </tfoot>
+        
       </table>
-      // <p className="my-8 text-2xl text-center">{cookieStand}</p>
-      // <p>{props.hours_arr}</p>
     )
   }
 }
